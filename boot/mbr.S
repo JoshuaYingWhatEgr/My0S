@@ -24,6 +24,8 @@ SECTION MBR  vstart=0x7c00 ;告诉编译器将mbr地址编译成0x7c00
        mov  cx,0
        mov  dx,0x184f
 
+       int  0x10
+
        mov  ah,3
        mov  bh,0
 
