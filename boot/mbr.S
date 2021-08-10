@@ -24,6 +24,8 @@ SECTION MBR  vstart=0x7c00 ;告诉编译器将mbr地址编译成0x7c00
        mov  cx,0
        mov  dx,0x184f
 
+       mov  ah,3
+       mov  bh,0
 
        int  0x10
 
@@ -45,7 +47,7 @@ SECTION MBR  vstart=0x7c00 ;告诉编译器将mbr地址编译成0x7c00
        jmp  $
 
        message db "1 MBR"
-       times   510-($-$$) db 0
+       times   510-($-$$) db 0;将最后两个字节填充为0
        db      0x55,0xaa  ;填充512字节最后两个字节为0x55,0xaa
 
 
