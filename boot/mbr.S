@@ -1,5 +1,7 @@
 ;主引导程序
+;让mbr可以读取硬盘(查询传输和中断传输方式)从磁盘把loader加载到内存
 ;---------------------------------------------
+%include "boot.inc"
 SECTION MBR  vstart=0x7c00 ;告诉编译器将mbr地址编译成0x7c00
         mov  ax,cs
         mov  ds,ax
@@ -44,6 +46,75 @@ SECTION MBR  vstart=0x7c00 ;告诉编译器将mbr地址编译成0x7c00
        mov  byte [gs:0x08],'R'
        mov  byte [gs:0x09],0xA4
 
+       mov  eax,LOADER_START_SECTOR;起始扇区lba的编号
+       mov  bx,LOADER_BASE_ADDR;写入的地址0x900 bootloader加载到内存的起始地址
+       mov  cx,1;现在的bootloader还是不是很大肯定小于512字节所以先读1个扇区
+       call rd_disk_m_16;读取程序的起始部分(一个扇区)
+
+       jmp  LOADER_BASE_ADDR
+
+rd_disk_m_16:
+
+       mov  esi,eax
+       mov  di,cx
+;读写磁盘第一步,设置要读取的扇区数
+       mov dx,0x1f2
+       mov al,cl
+       out dx,al
+
+       mov eax,esi
+;第二步:将lba地址存入0x1f3-0x1f6
+       ;lba地址7-0位写入端口 0x1f3
+       mov dx,0x1f3
+       out dx,al
+
+       ;lba地址15-8位写入端口0x1f4
+       mov cl,8
+       shr eax,cl
+       mov dx,0x1f4
+       out dx,al
+
+       ;lba地址23-16位写入端口0x1f5
+       shr eax,cl
+       mov dx,0x1f5
+       out dx,al
+
+       shr eax,cl
+       and al,0x0f
+       or  al,0xe0
+       mov dx,0x1f6
+       out dx,al
+
+;第三步:向0x1f7端口写入读命令,0x20
+       mov dx,0x1f7
+       mov al,0x20
+       out dx,al
+
+;第四步:检查硬盘状态
+    .not_ready:
+       nop
+       in al,dx
+       and al,0x88
+
+       cmp al,0x08
+       jnz .not_ready
+
+;第五步:从0x1f0端口读数据
+       mov ax,di
+       mov dx,256
+       mul dx
+       mov cx,ax
+
+       mov dx,0x1f0
+
+    .go_on_ready
+       in ax,dx
+       mov [bx],ax
+       add bx,2
+       loop .go_on_ready
+       ret
+
+
        ;mov  ah,3
        ;mov  bh,0
 
@@ -64,7 +135,7 @@ SECTION MBR  vstart=0x7c00 ;告诉编译器将mbr地址编译成0x7c00
        ;int  0x10
 
 
-       jmp  $;//死循环 程序会卡在这里不动
+       ;jmp  $;//死循环 程序会卡在这里不动
 
       ;message db "1 MBR";将通向bios的输入改为通向显存的输入
        times   510-($-$$) db 0;将最后两个字节填充为0
