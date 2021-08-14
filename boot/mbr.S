@@ -107,7 +107,7 @@ rd_disk_m_16:
 
        mov dx,0x1f0
 
-    .go_on_ready
+    .go_on_ready:
        in ax,dx
        mov [bx],ax
        add bx,2
