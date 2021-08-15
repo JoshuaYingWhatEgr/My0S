@@ -24,5 +24,4 @@ section loader vstart=LOADER_BASE_ADDR
        mov  byte [gs:0x0E],'R'
        mov  byte [gs:0x0F],0xA4
 
-
        jmp  $;死循环使程序在这里悬停
