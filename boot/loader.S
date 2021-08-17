@@ -28,26 +28,26 @@ LOADER_STACK_TOP equ LOADER_BASE_ADDR
 
        jmp  loader_start;
 
-;构建gdt及内部的描述符
-GDT_BASE: dd  0x00000000
+;构建gdt及其内部的描述符
+GDT_BASE: dd  0x00000000      ;
 
           dd  0x00000000
 
-CODE_DESC: dd 0x0000FFFF
+CODE_DESC: dd 0x0000FFFF      ;代码段 0x00cf9800-0x0000FFFF =0x00cf98000000FFFF
 
-           dd DESC_CODE_HIGH4
+           dd DESC_CODE_HIGH4 ;0x00cf9800
 
-DATA_STACK_DESC: dd 0x0000FFFF
+DATA_STACK_DESC: dd 0x0000FFFF ;数据段和栈段共用一个描述符 0x00cf9800-0x0000FFFF = 0x00cf98000000FFFF
 
-                 dd DESC_DATA_HIGH4
+                 dd DESC_DATA_HIGH4;0x00cf9800
 
-VIDEO_DESC: dd  0x80000007
+VIDEO_DESC: dd  0x80000007 ;显存段
 
             dd  DESC_VIDEO_HIGH4
 
 
-GDT_SIZE equ $ - GDT_BASE
-GDT_LIMIT equ GDT_SIZE -1
+GDT_SIZE equ $ - GDT_BASE;获取gdt大小
+GDT_LIMIT equ GDT_SIZE -1;获取gdt段界限
 
 ;预留60个8字节空位
 times 60 dq 0
@@ -62,12 +62,12 @@ gdt_ptr dw GDT_LIMIT
 
         dd GDT_BASE
 
-loadermsg dd '2 loader in rel.'
+loadermsg db '2 loader in real.'
 
 loader_start:
         mov  sp, LOADER_BASE_ADDR
         mov  bp, loadermsg
-        mov  cx, 16
+        mov  cx, 17
         mov  ax,0x1301
         mov  bx,0x001f
         mov  dx,0x1800
@@ -105,7 +105,7 @@ p_mode_start:
         mov ax,SELECTOR_VIDEO
         mov gs,ax
 
-        mov byte [gs:160], 'P'
+        mov byte [gs:160], 'P' ;进入保护模式后显示字符串P
 
         jmp $
 
