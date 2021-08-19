@@ -31,27 +31,27 @@ SECTION MBR  vstart=0x7c00 ;告诉编译器将mbr地址编译成0x7c00
        int  10h
 
 ;往显存中写入字符
-       mov  byte [gs:0x00],'1'
-       mov  byte [gs:0x01],0xA4
+       ;mov  byte [gs:0x00],'1'
+       ;mov  byte [gs:0x01],0xA4
 
-       mov  byte [gs:0x02],' '
-       mov  byte [gs:0x03],0xA4
+       ;mov  byte [gs:0x02],' '
+       ;mov  byte [gs:0x03],0xA4
 
-       mov  byte [gs:0x04],'M'
-       mov  byte [gs:0x05],0xA4
+       ;mov  byte [gs:0x04],'M'
+       ;mov  byte [gs:0x05],0xA4
 
-       mov  byte [gs:0x06],'B'
-       mov  byte [gs:0x07],0xA4
+       ;mov  byte [gs:0x06],'B'
+       ;mov  byte [gs:0x07],0xA4
 
-       mov  byte [gs:0x08],'R'
-       mov  byte [gs:0x09],0xA4
+       ;mov  byte [gs:0x08],'R'
+       ;mov  byte [gs:0x09],0xA4
 
        mov  eax,LOADER_START_SECTOR;起始扇区lba的编号
        mov  bx,LOADER_BASE_ADDR;写入的地址0x900 bootloader加载到内存的起始地址
        mov  cx,4;现在的bootloader还是不是很大肯定小于512字节所以先读1个扇区
        call rd_disk_m_16;读取程序的起始部分(一个扇区)
 
-       jmp  LOADER_BASE_ADDR+0x300;跳转到0x900bootloader处执行
+       jmp  LOADER_BASE_ADDR+0x300;跳转到0x900+0x300 bootloader处执行
 
 rd_disk_m_16:
 

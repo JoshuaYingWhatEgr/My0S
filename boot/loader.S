@@ -42,11 +42,50 @@ SELECTOR_VIDEO equ (0x0003<<3) + TI_GDT + RPL0
 gdt_ptr dw GDT_LIMIT
 
         dd GDT_BASE
-
+rd_disk_m_32
 ards_buf times 244 dd 0
 ards_nr  dw  0
 
 loadermsg db '2 loader in real.'
+
+;-------------------- 创建页目录和页表 -----------------------
+setup_page:
+;先把页目录占用的空间清零
+        mov  ecx,4096
+        mov  esi, 0
+.clear_page_dir:
+        mov byte [PAGE_DIR_TABLE_POS+esi],0
+        inc esi
+        loop .clear_page_dir
+
+;--------------- 创建页目录项 ------------------
+.create_pde:
+        mov eax,PAGE_DIR_TABLE_POS
+        add eax,0x1000      ;当前eax为第一个页表的位置和属性
+        mov ebx,eax         ;为create_pde做准备,ebx为基址
+;   下面将页目录项0和0xc00都存为第一个页表的地址，
+;   一个页表可表示4MB内存,这样0xc03fffff以下的地址和0x003fffff以下的地址都指向相同的页表，
+;   这是为将地址映射为内核地址做准备
+        or eax, PG_US_U | PG_RW_W | PG_P ;页目录项的属性RW和P位为1,US为1,表示用户属性,所有特权级别都可以访问.
+        mov [PAGE_DIR_TABLE_POS+0x0],eax ;第一个页目录项,在页目录表中的第1个目录项写入第一个页表的位置(0x101000)及属性(3)
+
+        mov [PAGE_DIR_TABLE_POS+0xc00],eax ; 一个页表项占用4字节,0xc00表示第768个页表占用的目录项,0xc00以上的目录项用于内核空间,
+                                           ; 也就是页表的0xc0000000~0xffffffff共计1G属于内核,0x0~0xbfffffff共计3G属于用户进程.
+        sub eax,0x1000
+        mov [PAGE_DIR_TABLE_POS+4092],eax  ; 使最后一个目录项指向页目录表自己的地址
+
+;------------- 创建页表项 ---------------
+        mov ecx,256                        ; 1M低端内存 / 每页大小4k = 256
+        mov esi,0
+        mov edx,PG_US_U | PG_RW_W | PG_P   ; 属性为7,US=1,RW=1,P=1
+.create_pte:                               ;创建页表入口
+        mov [ebx+esi*4],edx                ; 此时的ebx已经在上面通过eax赋值为0x101000,也就是第一个页表的地址
+
+        add edx,4096
+        inc esi
+        loop .create_pte
+
+
 
 loader_start:
 
