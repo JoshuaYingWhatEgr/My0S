@@ -6,6 +6,11 @@ LOADER_BASE_ADDR equ 0x900
 ;bootloader在磁盘中的起始扇区编号
 LOADER_START_SECTOR equ 0x2
 
+;------------------- kernel -----------------
+KERNEL_BIN_BASE_ADDR equ 0x70000
+KERNEL_START_SECTOR equ 0x30
+KERNEL_ENTRY_POINT equ 0xc0001500
+
 ;页目录表的物理地址
 PAGE_DIR_TABLE_POS equ 0x100000
 
@@ -48,3 +53,6 @@ RPL2  equ   10b
 RPL3  equ   11b
 TI_GDT	 equ   000b
 TI_LDT	 equ   100b
+
+;-------------  program type 定义   --------------
+PT_NULL equ 0
