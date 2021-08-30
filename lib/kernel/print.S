@@ -34,6 +34,7 @@ put_char:
     mov bx,ax      ;这么做主要是用bx做16位的基址寻址 bx现在已经是光标坐标值了它是下一个可打印字符的位置
     ;获取待打印的字符
     mov ecx,[esp+36] ;pushad压入的8个通用寄存器4×8＝32字节,加上put_char的返回地址4字节,故esp+36字节
+                     ;ecx就是put_char(uint8_t char_asci)中char_asci的数值
     ;判断输入的字符如果是特殊字符还需要做相应的处理
     cmp cl,0xd       ;CR是0x0d,LF是0x0a 回车符CR,换行符LF和backspace当作不可见字符
     jz  .is_carriage_return
@@ -47,17 +48,17 @@ put_char:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .is_backspace:
-;;;;;;;;;;;;;; backspce ;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;; backspce 回退键 ;;;;;;;;;;;;;;;;
     dec bx
     shl bx,1        ;将光标左移一位*2
 
-    mov byte [gs:bx],0x20
-    inc bx
-    mov byte [gs:bx],0x07
-    shl bx,1
-    jmp .set_cursor
+    mov byte [gs:bx],0x20 ;将低字节设置为空格 处理回退字符的ascii码
+    inc bx                ;将bx加上1 这样就可以处理回退字符的属性位
+    mov byte [gs:bx],0x07 ;设置黑底白字
+    shr bx,1               ;右移一位恢复光标坐标，此时bx覆盖了新的空格
+    jmp .set_cursor        ;获取到了光标的坐标后,将光标设置到新的位置
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; 处理可见字符 ;;;;;;;;;;;;;;;;;;;;;;;;
 .put_other:
     shl bx,1
     mov [gs:bx],cl      ;ascii字符本身
@@ -70,9 +71,10 @@ put_char:
                         					  ; 若超出屏幕字符数大小(2000)则换行处理
 .is_line_feed:          ;处理换行符
 .is_carriage_return:    ;处理回车符
+                        ;将光标切换到行首 然后换到下一行
 
     xor dx,dx
-    mov ax,dx
+    mov ax,bx
     mov si,80
     div si
     sub bx,dx
