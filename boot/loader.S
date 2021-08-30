@@ -3,7 +3,7 @@
    LOADER_STACK_TOP equ LOADER_BASE_ADDR
 
 ;构建gdt及其内部的描述符
-   GDT_BASE:   dd    0x00000000
+   GDT_BASE:   dd    0x00000000 ;目前还是处于实模式中 所以逻辑地址由开发人员指定
 	       dd    0x00000000
 
    CODE_DESC:  dd    0x0000FFFF
@@ -29,7 +29,7 @@
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
    ;以下是定义gdt的指针，前2字节是gdt界限，后4字节是gdt起始地址
-   gdt_ptr  dw  GDT_LIMIT
+   gdt_ptr  dw  GDT_LIMIT           ;gdtr寄存器一共48位
 	    dd  GDT_BASE
 
    ;人工对齐:total_mem_bytes4字节+gdt_ptr6字节+ards_buf244字节+ards_nr2,共256字节

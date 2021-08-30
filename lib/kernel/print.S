@@ -34,6 +34,7 @@ put_char:
     mov bx,ax      ;这么做主要是用bx做16位的基址寻址 bx现在已经是光标坐标值了它是下一个可打印字符的位置
     ;获取待打印的字符
     mov ecx,[esp+36] ;pushad压入的8个通用寄存器4×8＝32字节,加上put_char的返回地址4字节,故esp+36字节
+    ;判断输入的字符如果是特殊字符还需要做相应的处理
     cmp cl,0xd       ;CR是0x0d,LF是0x0a 回车符CR,换行符LF和backspace当作不可见字符
     jz  .is_carriage_return
     cmp cl,0xa       ;换行符LF
@@ -44,5 +45,91 @@ put_char:
     jz .is_backspace
     jmp .put_other
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.is_backspace:
+;;;;;;;;;;;;;; backspce ;;;;;;;;;;;;;;;;
+    dec bx
+    shl bx,1        ;将光标左移一位*2
+
+    mov byte [gs:bx],0x20
+    inc bx
+    mov byte [gs:bx],0x07
+    shl bx,1
+    jmp .set_cursor
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.put_other:
+    shl bx,1
+    mov [gs:bx],cl      ;ascii字符本身
+    inc bx
+    mov byte [gs:bx],0x07 ;字符属性
+    shr bx,1            ;恢复老的光标值
+    inc bx              ;下一个光表值
+    cmp bx,2000
+    jl  .set_cursor     ; 若光标值小于2000,表示未写到显存的最后,则去设置新的光标值
+                        					  ; 若超出屏幕字符数大小(2000)则换行处理
+.is_line_feed:          ;处理换行符
+.is_carriage_return:    ;处理回车符
+
+    xor dx,dx
+    mov ax,dx
+    mov si,80
+    div si
+    sub bx,dx
+
+.is_carriage_return_end:    ;回车符cr处理完毕
+    add bx,80
+    cmp bx,2000
+.is_line_feed_end:
+    jl .set_cursor
+
+.roll_screen:       ;若超出屏幕大小，开始滚屏
+    cld
+    mov ecx,960
+    mov esi,0xb80a0
+    mov edi,0xb8000
+    rep movsd
+
+;;;;;;;;;;;; 将最后一行填充为空白
+    mov ebx,3840
+    mov ecx,80
+.cls:
+    mov word [gs:ebx],0x0720    ;黑底白字空格键
+    add ebx,2
+    loop .cls
+    mov bx,1920
+
+.set_cursor:
+    ;;;将光标设置为bx值
+;;;;;;;; 先设置高8位 ;;;;;;;;;;;;;;;
+    mov dx,0x03d4
+    mov al,0x0e
+    out dx,al
+    mov dx,0x03d5       ;通过读写数据端口0x3d5来获得或设置光标位置
+    mov al,bh
+    out dx,al
+
+
+
+;;;;;;;;;;;; 设置低8位 ;;;;;;;;;;;;;;;;;;;;;;;
+    mov dx,0x03d4
+    mov al,0x0f
+    out dx,al
+    mov dx,0x03d5
+    mov al,bl
+    out dx,al
+.put_char_done:
+    popad
+    ret
+
+
+
+
+
+
+
+
+
+
 
 
