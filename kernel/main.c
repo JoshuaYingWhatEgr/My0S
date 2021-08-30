@@ -1,4 +1,4 @@
-#include "printf.h"
+#include "print.h"
 
 int main(void) {
 
@@ -8,16 +8,6 @@ int main(void) {
     put_char('n');
     put_char('e');
     put_char('l');
-    put_char('\n');
-    put_char('y');
-    put_char('o');
-    put_char('u');
-    put_char('y');
-    put_char('i');
-    put_char('f');
-    put_char('e');
-    put_char('n');
-    put_char('g');
     put_char('\n');
     put_char('1');
     put_char('2');
