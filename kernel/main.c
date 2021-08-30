@@ -13,5 +13,7 @@ int main(void) {
     put_char('2');
     put_char('\b');
     put_char('3');
+
+    put_str("str function\n");
     while(1);
 }

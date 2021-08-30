@@ -4,6 +4,31 @@ SELECTOR_VIDEO equ (0x0003<<3)+TI_GDT+RPL0
 
 [bits 32]
 section .text
+
+;----------------- put_str字符串函数实现 -----------------------
+global put_str
+put_str:
+    push ebx
+    push ecx
+    xor  ecx,ecx
+    mov  ebx,[esp+12]  ;获取打印的字符串地址
+
+.goon:
+    mov cl,[ebx]
+    cmp cl,0
+    jz  .str_over ;如果字符处理到了结尾0 则跳到结束处返回
+    push ecx      ;为put_char函数传递参数
+    call put_char
+    add esp,4
+    inc ebx    ;ebx指向下一个字符
+    jmp .goon
+
+.str_over:
+    pop ecx
+    pop ebx
+    ret
+
+
 ;------------------ put_char打印单个字符函数实现 --------------------
 ;把栈中的一个字符写入光标所在处
 ;-------------------------------------------------------
