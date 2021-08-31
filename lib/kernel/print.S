@@ -3,7 +3,7 @@ RPL0   equ 0
 SELECTOR_VIDEO equ (0x0003<<3)+TI_GDT+RPL0
 
 section .data
-put_int_buffer dp 0     ;定义8字节的缓冲区用于int向char的转换
+put_int_buffer dq 0     ;定义8字节的缓冲区用于int向char的转换
 
 [bits 32]
 section .text

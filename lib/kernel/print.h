@@ -6,4 +6,5 @@
 #include "stdint.h"
 void put_char(uint8_t char_asci); //从栈中获取参数 char_asci
 void put_str(char* str);
+void put_int(uint32_t i);
 #endif

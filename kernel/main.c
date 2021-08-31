@@ -15,5 +15,7 @@ int main(void) {
     put_char('3');
 
     put_str("str function\n");
+
+    put_int(0x00001234);
     while(1);
 }
