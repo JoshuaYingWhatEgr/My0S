@@ -14,25 +14,25 @@ intr_entry_table:
 
 %macro VECTOR 2
 section .text
-intr%lentry:
+intr%1entry:
 
-    %2
+    %2                  ;push 0
     push intr_str
     call put_str
     add esp ,4
 
     mov al,0x20
-    out 0xa0,al
-    out 0x20,al
+    out 0xa0,al         ;向从片发送eoi
+    out 0x20,al         ;向主片发送eoi
 
-    add esp,4
-    iret
+    add esp,4           ;跨过error_code
+    iret                ;从中断返回
 
 section .data
-    dd  intr%lentry
+    dd  intr%1entry
 %endmacro
 
-VECTOR 0x00,ZERO
+VECTOR 0x00,ZERO ;vector有两个参数 %2主要用的是第二个参数ZERO= push 0
 VECTOR 0x01,ZERO
 VECTOR 0x02,ZERO
 VECTOR 0x03,ZERO
