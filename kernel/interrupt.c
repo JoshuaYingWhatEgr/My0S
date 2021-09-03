@@ -11,7 +11,7 @@
 #define PIC_S_CTRL 0xa0     //从片的控制端口
 #define PIC_S_DATA 0xa1    //从片的数据端口
 
-static void pic_init(void) {
+static void pic_init(void) {  //处理所有来自外设的中断
 
     /* 初始化主片 */
     outb (PIC_M_CTRL, 0x11);   // ICW1: 边沿触发,级联8259, 需要ICW4.
@@ -90,8 +90,8 @@ void idt_init() {
  */
 
     uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t) (uint32_t) idt << 16));
-    asm volatile("lidt %0" : : "m" (idt_operand));
-    put_str("idt_init doen\n");
+    asm volatile("lidt %0" : : "m" (idt_operand)); //中断描述符表地址
+    put_str("idt_init done\n");
 }
 
 
