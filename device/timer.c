@@ -6,7 +6,7 @@
 #define IRQ0_FREQUENCY 1        //初始计数值
 #define INPUT_FREQUENCY 1193180 //计数器的工作频率
 #define COUNTER0_VALUE  INPUT_FREQUENCY / IRQ0_FREQUENCY
-#define CONTRER0_PORT  40
+#define CONTRER0_PORT  0x40     //这里使用计数器0
 #define COUNTER0_NO     0
 #define COUNTER_MODE    2
 #define READ_WRITE_LATCH 3
