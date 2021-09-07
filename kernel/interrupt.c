@@ -11,6 +11,9 @@
 
 #define IDT_DESC_CNT 0x21     // 目前总共支持的中断数
 
+#define EFLAGS_IF 0x0000020     //将eflag寄存器的if位置为1
+#define GET_EFLAGS(EFLAG_VAR)  asm volatile("pushfl; popl %0" : "=g" (EFLAG_VAR))
+
 /*中断门描述符结构体*/
 struct gate_desc {
     uint16_t func_offset_low_word;
@@ -94,7 +97,7 @@ static void exception_init(void) {
         idt_table[i] = general_intr_handler;
 
         intr_name[i] = "unknow";//intr_name[0]~intr_name[19]都定义正确的异常名
-                                //intr_name[20]~intr_name[32]一律为unknnow不指向空
+        //intr_name[20]~intr_name[32]一律为unknnow不指向空
     }
 
     intr_name[0] = "#DE Divide Error";
@@ -117,6 +120,52 @@ static void exception_init(void) {
     intr_name[17] = "#AC Alignment Check Exception";
     intr_name[18] = "#MC Machine-Check Exception";
     intr_name[19] = "#XF SIMD Floating-Point Exception";
+}
+
+/**
+ * 开中断并返回开中断前的状态
+ */
+enum intr_status intr_enable() {
+    enum intr_status old_status;
+    if (INTR_NO == intr_get_status()) {
+        old_status = INTR_NO;
+        return old_status;
+    } else {
+        old_status = INTR_OFF;
+        asm volatile("sti"); //开中断
+        return old_status;
+    }
+}
+
+/**
+ * 关中断并返回之前关中断的状态
+ */
+enum intr_status intr_disable() {
+    enum intr_status old_status;
+    if (INTR_NO == intr_get_status()) {
+        old_status = INTR_NO;
+        asm volatile("cli" : : : "memory"); //将if位置为0
+        return old_status;
+    } else {
+        old_status = INTR_OFF;
+        return old_status
+    }
+}
+
+/**
+ * 将中断状态设置为status
+ */
+enum intr_status intr_set_status(enum intr_status status) {
+    return status & INTR_NO ? intr_enable() : intr_disable();
+}
+
+/**
+ * 获取当前中断状态
+ */
+enum intr_status intr_get_status() {
+    uint32_t eflags = 0;
+    GET_EFLAGS(eflags);
+    return (EFLAGS_IF & eflags) ? INTR_ON : INTR_OFF;
 }
 
 /*完成有关中断的所有初始化工作*/
