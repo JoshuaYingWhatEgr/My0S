@@ -11,6 +11,16 @@ LDFLAGS = -melf_i386 -Ttext $(ENTRY_POINT) -e main -Map $(BUILD_DIR)/kernel.map
 OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
       $(BUILD_DIR)/timer.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o \
       $(BUILD_DIR)/debug.o
+
+##############     MBR代码编译     ###############
+$(BUILD_DIR)/mbr.bin: boot/mbr.S
+	$(AS) $(ASBINLIB) $< -o $@
+
+##############     bootloader代码编译     ###############
+$(BUILD_DIR)/loader.bin: boot/loader.S
+	$(AS) $(ASBINLIB) $< -o $@
+
+
 ##############     c代码编译     ###############
 $(BUILD_DIR)/main.o: kernel/main.c lib/kernel/print.h \
         lib/stdint.h kernel/init.h
