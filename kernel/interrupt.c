@@ -127,8 +127,8 @@ static void exception_init(void) {
  */
 enum intr_status intr_enable() {
     enum intr_status old_status;
-    if (INTR_NO == intr_get_status()) {
-        old_status = INTR_NO;
+    if (INTR_ON == intr_get_status()) {
+        old_status = INTR_ON;
         return old_status;
     } else {
         old_status = INTR_OFF;
@@ -142,8 +142,8 @@ enum intr_status intr_enable() {
  */
 enum intr_status intr_disable() {
     enum intr_status old_status;
-    if (INTR_NO == intr_get_status()) {
-        old_status = INTR_NO;
+    if (INTR_ON == intr_get_status()) {
+        old_status = INTR_ON;
         asm volatile("cli" : : : "memory"); //将if位置为0
         return old_status;
     } else {
@@ -156,7 +156,7 @@ enum intr_status intr_disable() {
  * 将中断状态设置为status
  */
 enum intr_status intr_set_status(enum intr_status status) {
-    return status & INTR_NO ? intr_enable() : intr_disable();
+    return status & INTR_ON ? intr_enable() : intr_disable();
 }
 
 /**

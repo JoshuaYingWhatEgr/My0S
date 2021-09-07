@@ -1,5 +1,5 @@
-#ifndef _KERNEL_INTERRUPT_H
-#define _KERNEL_INTERRUPT_H
+#ifndef __KERNEL_INTERRUPT_H
+#define __KERNEL_INTERRUPT_H
 #include "stdint.h"
 void idt_init(void);
 
@@ -7,7 +7,7 @@ typedef void* intr_handler;
 
 enum intr_status{ //中断状态
     INTR_OFF,   //中断关闭
-    INTR_NO     //中断打开
+    INTR_ON     //中断打开
 };
 
 enum intr_status intr_enable(void);
