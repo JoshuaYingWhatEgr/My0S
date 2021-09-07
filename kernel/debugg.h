@@ -9,11 +9,11 @@ void panic_spin(char* file_name, int line, const char* func, const char* conditi
 #define PANIC(...) panic_spin(__FILE__,__LINE__,__func__,__VA_ARGS__);
 
 #ifdef NDEBUG
-#define  ASSERT(CONDITION)((void)0)
+    #define  ASSERT(CONDITION)((void)0)
 #else
-#define ASSERT(CONDITION)
-    //CONDITION条件为真时什么也不做
-    if(CONDITION) {} else {
+    #define ASSERT(CONDITION)
+    /* CONDITION条件为真时什么也不做 */
+        if(CONDITION) {} else {
         PANIC(#CONDITION);
     }
 #endif
