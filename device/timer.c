@@ -23,7 +23,7 @@ static void frequency_set(uint8_t counter_port, uint8_t count_no,
     /**
      * 先写入counter_value的低8位
      */
-    outb(counter_port, (uint8_t) counter_value)
+    outb(counter_port, (uint8_t) counter_value);
 
     /**
      * 再写入高8位

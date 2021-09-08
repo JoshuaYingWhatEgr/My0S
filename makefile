@@ -59,7 +59,7 @@ mk_dir:
 	if [ ! -d $(BUILD_DIR) ];then mkdir $(BUILD_DIR);fi
 
 mk_img:
-	if [ ! -e $(DISK_IMG) ];then /home/joshuayingwhat/bochs/bximage -hd -mode="flat" -size=3 -q $(DISK_IMG);fi
+	if [ ! -e $(DISK_IMG) ];then /usr/local/bin/bximage -hd -mode="flat" -size=3 -q $(DISK_IMG);fi
 
 hd:
 	dd if=$(BUILD_DIR)/mbr.bin of=hd3M.img bs=512 count=1  conv=notrunc

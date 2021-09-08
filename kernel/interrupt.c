@@ -148,7 +148,7 @@ enum intr_status intr_disable() {
         return old_status;
     } else {
         old_status = INTR_OFF;
-        return old_status
+        return old_status;
     }
 }
 
