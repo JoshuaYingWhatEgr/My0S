@@ -2,6 +2,7 @@
 #include "print.h"
 #include "interrupt.h"
 #include "../device/timer.h"
+#include "memory.h"
 
 /**
  * 负责初始化所有模块
@@ -18,4 +19,9 @@ void init_all() {
      * 启动计数器
      */
     timer_init();
+
+    /**
+     * 初始化内存池
+     */
+    mem_init();
 }
