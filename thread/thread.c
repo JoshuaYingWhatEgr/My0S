@@ -23,7 +23,7 @@ void thread_create(struct task_struct *pthread, thread_func function, void *func
     /*留出线程栈空间 */
     pthread->self_kstack -= sizeof(struct thread_stack);
     struct thread_stack *kthread_stack = (struct thread_stack *) pthread->self_kstack;
-    kthread_stack->eip = kernel_thread;
+    kthread_stack->eip = kernel_thread;//需要执行的函数的地址
     kthread_stack->function = function;
     kthread_stack->func_arg = func_arg;
     kthread_stack->ebp = kthread_stack->ebx = kthread_stack->esi = kthread_stack->edi = 0;
