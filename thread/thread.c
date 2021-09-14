@@ -26,33 +26,34 @@ void thread_create(struct task_struct *pthread, thread_func function, void *func
     kthread_stack->eip = kernel_thread;//需要执行的函数的地址
     kthread_stack->function = function;
     kthread_stack->func_arg = func_arg;
+    //线程的具体逻辑还没执行 所以在线程执行前将寄存器初始化为0
     kthread_stack->ebp = kthread_stack->ebx = kthread_stack->esi = kthread_stack->edi = 0;
 }
 
 /**
  * 初始化线程基本信息
  */
- void init_thread(struct task_struct* pthread,char* name,int prio) {
-    memset(pthread,0,sizeof(*pthread));
-    strcpy(pthread->name,name);
-    pthread->status =TASK_RUNNING;
-    pthread->priority=prio;
+void init_thread(struct task_struct *pthread, char *name, int prio) {
+    memset(pthread, 0, sizeof(*pthread));
+    strcpy(pthread->name, name);
+    pthread->status = TASK_RUNNING;
+    pthread->priority = prio;
     /*self_stack是线程自己在内核态下使用的栈顶地址*/
-    pthread->self_kstack = (uint32_t)((uint32_t)pthread+PG_SIZE);
-    pthread->stack_magic=0x19870916;
- }
+    pthread->self_kstack = (uint32_t) ((uint32_t) pthread + PG_SIZE);
+    pthread->stack_magic = 0x19870916;
+}
 
- /**
-  * 创建优先级为prio的线程,线程名为name,
-  * 线程所执行的函数是function(func_arg);
-  */
-struct  task_struct* thread_start(char* name,int prio,thread_func function,void* func_arg) {
+/**
+ * 创建优先级为prio的线程,线程名为name,
+ * 线程所执行的函数是function(func_arg);
+ */
+struct task_struct *thread_start(char *name, int prio, thread_func function, void *func_arg) {
     /*内核进程和用户进程的pcb都位于内核中*/
-    struct task_struct* thread = get_kernel_pages(1);
+    struct task_struct *thread = get_kernel_pages(1);
 
-    init_thread(thread,name,prio);
-    thread_create(thread,function,func_arg);
+    init_thread(thread, name, prio);
+    thread_create(thread, function, func_arg);
 
-     asm volatile ("movl %0, %%esp; pop %%ebp; pop %%ebx; pop %%edi; pop %%esi; ret" : : "g" (thread->self_kstack) : "memory");
-     return thread;
+    asm volatile ("movl %0, %%esp; pop %%ebp; pop %%ebx; pop %%edi; pop %%esi; ret" : : "g" (thread->self_kstack) : "memory");
+    return thread;
 }

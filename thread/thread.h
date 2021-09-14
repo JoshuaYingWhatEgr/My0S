@@ -68,22 +68,25 @@ struct thread_stack {
     void (*eip)(thread_func *func, void *func_arg);//当线程被调度上处理器时需要eip就是该函数的地址
 
     void (*unused_retaddr);//返回地址
-    thread_func* function;//线程中执行的函数
-    void* func_arg;
+    thread_func *function;//线程中执行的函数
+    void *func_arg;
 };
 
 /**
  * 进程和线程的身份证pcb,程序控制块
  * */
-struct task_struct{
-    uint32_t* self_kstack;//各内核线程都用自己的内核栈顶指针
+struct task_struct {
+    uint32_t *self_kstack;//各内核线程都用自己的内核栈顶指针
     enum task_status status;
     uint8_t priority;//线程优先级
     char name[16];//进程或者线程的名字
     uint32_t stack_magic; //用这串数字做栈的边界标记,用于检测栈的溢出
 };
 
-void thread_create(struct task_struct* pthread, thread_func function, void* func_arg);
-void init_thread(struct task_struct* pthread, char* name, int prio);
-struct task_struct* thread_start(char* name, int prio, thread_func function, void* func_arg);
+void thread_create(struct task_struct *pthread, thread_func function, void *func_arg);
+
+void init_thread(struct task_struct *pthread, char *name, int prio);
+
+struct task_struct *thread_start(char *name, int prio, thread_func function, void *func_arg);
+
 #endif
