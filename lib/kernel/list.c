@@ -7,6 +7,7 @@
  * */
 void list_init(struct list *list) {
     list->head.prev = NULL;
+    //表头和表尾连接起来
     list->head.next = &list->tail;
     list->tail.prev = &list->head;
     list->tail.next = NULL;
@@ -14,7 +15,7 @@ void list_init(struct list *list) {
 
 /*** 把链表元素elem插入在元素before之前 ***/
 void list_insert_before(struct list_elem *before, struct list_elem *elem) {
-    enum intr_status old_status = intr_disable();
+    enum intr_status old_status = intr_disable();//关中断保证原子性
 
     /** 将before前驱元素的后继元素更新为elem,暂时使before脱离链表 **/
     before->prev->next = elem;
@@ -25,7 +26,7 @@ void list_insert_before(struct list_elem *before, struct list_elem *elem) {
 
     /** 更新before的前驱节点为elem **/
     before->prev = elem;
-
+    //重新开启中断
     intr_set_status(old_status);
 }
 
