@@ -83,9 +83,27 @@ static void general_intr_handler(uint8_t vec_nr) {
         return;
     }
 
-    put_str("int vecctor : 0x");
-    put_int(vec_nr);
-    put_char('\n');
+    /* 将光标设置为0,清出一片打印的区域方便阅读 */
+    set_cursor(0);
+    int cursor_pos = 0;
+    while(cursor_pos < 320) {
+        put_char(' ');
+        cursor_pos++;
+    }
+    /* 重置光标为屏幕左上角 */
+    set_cursor(0)
+    put_str("!!!!!!!      excetion message begin  !!!!!!!!\n");
+    set_cursor(88);//从第二行第8个字符开始打印
+    put_str(intr_name[vec_nr]);
+    if(vec_nr == 14) {
+        //缺页异常
+        int page_fault_vaddr = 0;
+        asm ("movl %%cr2, %0" : "=r" (page_fault_vaddr));	  // cr2是存放造成page_fault的地址
+        put_str("\npage fault addr is ");put_int(page_fault_vaddr);
+    }
+    put_str("\n!!!!!!!      excetion message end    !!!!!!!!\n");
+    //死循环悬停在这里
+    while(1);
 }
 
 /**
