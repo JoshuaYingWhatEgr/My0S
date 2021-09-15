@@ -65,5 +65,7 @@ void timer_init() {
      * 设置8253位定时周期
      */
     frequency_set(CONTRER0_PORT, COUNTER0_NO, READ_WRITE_LATCH, COUNTER_MODE, COUNTER0_VALUE);
+
+    register_handler(0x20,intr_timer_handler());
     put_str("timer_init done\n");
 }

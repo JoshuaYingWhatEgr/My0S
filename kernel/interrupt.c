@@ -86,7 +86,7 @@ static void general_intr_handler(uint8_t vec_nr) {
     /* 将光标设置为0,清出一片打印的区域方便阅读 */
     set_cursor(0);
     int cursor_pos = 0;
-    while(cursor_pos < 320) {
+    while (cursor_pos < 320) {
         put_char(' ');
         cursor_pos++;
     }
@@ -95,15 +95,16 @@ static void general_intr_handler(uint8_t vec_nr) {
     put_str("!!!!!!!      excetion message begin  !!!!!!!!\n");
     set_cursor(88);//从第二行第8个字符开始打印
     put_str(intr_name[vec_nr]);
-    if(vec_nr == 14) {
+    if (vec_nr == 14) {
         //缺页异常
         int page_fault_vaddr = 0;
-        asm ("movl %%cr2, %0" : "=r" (page_fault_vaddr));	  // cr2是存放造成page_fault的地址
-        put_str("\npage fault addr is ");put_int(page_fault_vaddr);
+        asm ("movl %%cr2, %0" : "=r" (page_fault_vaddr));      // cr2是存放造成page_fault的地址
+        put_str("\npage fault addr is ");
+        put_int(page_fault_vaddr);
     }
     put_str("\n!!!!!!!      excetion message end    !!!!!!!!\n");
     //死循环悬停在这里
-    while(1);
+    while (1);
 }
 
 /**
@@ -184,6 +185,11 @@ enum intr_status intr_get_status() {
     uint32_t eflags = 0;
     GET_EFLAGS(eflags);
     return (EFLAGS_IF & eflags) ? INTR_ON : INTR_OFF;
+}
+
+/* 注册时钟中断处理程序 */
+static void register_handler(uint8_t vector_no, intr_handler function) {
+    idt_table[vector_no] = function;
 }
 
 /*完成有关中断的所有初始化工作*/
