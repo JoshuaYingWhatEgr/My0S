@@ -2,13 +2,13 @@
 ;------------------------------------------------------------
 %include "boot.inc"
 SECTION MBR vstart=0x7c00
-   mov ax,cs
+   mov ax,cs;//由于bios是通过jmp 0:0x7c00的所以cs为0
    mov ds,ax
    mov es,ax
    mov ss,ax
    mov fs,ax
-   mov sp,0x7c00
-   mov ax,0xb800
+   mov sp,0x7c00;//初始化栈指针,0x7c00一下的区域是可用区域
+   mov ax,0xb800;//文本模式的显示适配器
    mov gs,ax
 
 ; 清屏
@@ -29,7 +29,7 @@ SECTION MBR vstart=0x7c00
    mov     dx, 184fh		   ; 右下角: (80,25),
 				   ; 因为VGA文本模式中，一行只能容纳80个字符,共25行。
 				   ; 下标从0开始，所以0x18=24,0x4f=79
-   int     10h                     ; int 10h
+   int     0x10                     ; int 10h
 
    ; 输出字符串:MBR
    mov byte [gs:0x00],'1'
