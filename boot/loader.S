@@ -6,8 +6,8 @@
    GDT_BASE:   dd    0x00000000 ;目前还是处于实模式中 所以逻辑地址由开发人员指定
 	       dd    0x00000000
 
-   CODE_DESC:  dd    0x0000FFFF
-	       dd    DESC_CODE_HIGH4
+   CODE_DESC:  dd    0x0000FFFF  ;低4字节
+	       dd    DESC_CODE_HIGH4 ;高4字节
 
    DATA_STACK_DESC:  dd    0x0000FFFF
 		     dd    DESC_DATA_HIGH4
@@ -15,9 +15,9 @@
    VIDEO_DESC: dd    0x80000007	       ; limit=(0xbffff-0xb8000)/4k=0x7
 	       dd    DESC_VIDEO_HIGH4  ; 此时dpl为0
 
-   GDT_SIZE   equ   $ - GDT_BASE
-   GDT_LIMIT   equ   GDT_SIZE -	1
-   times 60 dq 0					 ; 此处预留60个描述符的空位(slot)
+   GDT_SIZE   equ   $ - GDT_BASE;获取gdt大小
+   GDT_LIMIT   equ   GDT_SIZE -	1;gdt边界值
+   times 60 dq 0					 ;此处预留60个描述符的空位(slot) 中断描述符表和任务状态段 ldt,tss
    SELECTOR_CODE equ (0x0001<<3) + TI_GDT + RPL0         ; 相当于(CODE_DESC - GDT_BASE)/8 + TI_GDT + RPL0 设置code段在gdt中的第1项
    SELECTOR_DATA equ (0x0002<<3) + TI_GDT + RPL0	 ; 同上   设置data段在gdt中的第2项
    SELECTOR_VIDEO equ (0x0003<<3) + TI_GDT + RPL0	 ; 同上   设置video段在gdt中的第3项
@@ -137,12 +137,12 @@
    hlt
 
 [bits 32]
-p_mode_start:
+p_mode_start: ;p_mode_start就是cs
    mov ax, SELECTOR_DATA
    mov ds, ax
    mov es, ax
    mov ss, ax
-   mov esp,LOADER_STACK_TOP
+   mov esp,LOADER_STACK_TOP;进入保护模式后栈的地址还是0x900
    mov ax, SELECTOR_VIDEO
    mov gs, ax
 

@@ -2,7 +2,7 @@
 ;------------------------------------------------------------
 %include "boot.inc"
 SECTION MBR vstart=0x7c00
-   mov ax,cs;//由于bios是通过jmp 0:0x7c00的所以cs为0
+   mov ax,cs;//由于bios是通过jmp 0:0x7c00所以cs为0
    mov ds,ax
    mov es,ax
    mov ss,ax
