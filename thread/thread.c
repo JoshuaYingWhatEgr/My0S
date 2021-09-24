@@ -15,6 +15,31 @@ static struct list_elem *thread_tag;//用于保存队列中的线程节点
 
 extern void switch_to(struct task_struct *cur, struct task_struct *next);
 
+/* 当前线程将自己阻塞,标志其状态位stat */
+void thread_block(enum task_status stat) {
+    ASSERT(((stat == TASK_BLOCKED) || (stat == TASK_WAITTING) || (stat == TASK_HANDING)));
+    enum intr_status old_status = intr_disable();
+    struct task_struct *cur_thread = running_thread();
+    cur_thread->status = stat;//设置当前线程状态
+    schedule();//将当前线程换下处理器
+    intr_set_status(old_status);
+}
+
+/* 将线程解除阻塞 */
+void thread_unblock(struct task_struct *pthread) {
+    enum intr_status old_status = intr_disable();
+    ASSERT((pthread->status == TASK_BLOCKED) || (pthread->status == TASK_WAITING) || (pthread->status == TASK_HANGING));
+    if (pthread->status != TASK_READY) {
+        ASSERT(!elem_find(&thread_ready_list, &pthread->general_tag));
+        if (elem_find(&thread_ready_list, &pthread->general_tag)) {
+            PANIC("thread_unblock: blocked thread in ready_list\n");
+        }
+        list_push(&thread_ready_list, &pthread->general_tag);
+        pthread->status = TASK_READY;//放到队列最前面使其得到尽快调用
+    }
+    intr_set_status(old_status);
+}
+
 /* 获取当前线程的pcb指针 */
 struct task_struct *running_thread() {
     uint32_t esp;
