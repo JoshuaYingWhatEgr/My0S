@@ -160,7 +160,7 @@ p_mode_start: ;p_mode_start就是cs
    sgdt [gdt_ptr]	      ; 存储到原来gdt所有的位置
 
    ;将gdt描述符中视频段描述符中的段基址+0xc0000000
-   mov ebx, [gdt_ptr + 2]
+   mov ebx, [gdt_ptr + 2];得到gdt的基地址
    or dword [ebx + 0x18 + 4], 0xc0000000      ;视频段是第3个段描述符,每个描述符是8字节,故0x18。
 					      ;段描述符的高4字节的最高位是段基址的31~24位
 
