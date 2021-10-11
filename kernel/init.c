@@ -30,10 +30,10 @@ void init_all() {
     /**
      * 初始化线程
      */
-     thread_init();
+    thread_init();
 
-     /**
-      * 初始化控制台
-      */
-      console_init();
+    /**
+     * 初始化控制台
+     */
+    console_init();
 }
