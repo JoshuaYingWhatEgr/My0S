@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "memory.h"
 #include "thread.h"
+#include "console.h"
 
 /**
  * 负责初始化所有模块
@@ -30,4 +31,9 @@ void init_all() {
      * 初始化线程
      */
      thread_init();
+
+     /**
+      * 初始化控制台
+      */
+      console_init();
 }

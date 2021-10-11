@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "../thread/thread.h"
 #include "interrupt.h"
+#include "../device/console.h"
 
 void k_thread_a(void *);
 
@@ -29,9 +30,7 @@ int main(void) {
 
     intr_enable();//打开时钟中断
     while (1) {
-        intr_disable();//关中断 实现互斥
-        put_str("Main");
-        intr_enable();//将中断打开
+        console_put_str("Main ");
     }
     return 0;
 }
@@ -40,9 +39,7 @@ void k_thread_a(void *arg) {
     char *par = arg;
 
     while (1) {
-        intr_disable(); //关中断 打印字符实现互斥
-        put_str(par);
-        intr_enable();//开中断
+        console_put_str(par);
     }
 }
 
@@ -50,9 +47,7 @@ void k_thread_b(void *arg) {
     char *par = arg;
 
     while (1) {
-        intr_disable(); //关中断 打印字符实现互斥
-        put_str(par);
-        intr_enable();//开中断
+        console_put_str(par);
     }
 }
 

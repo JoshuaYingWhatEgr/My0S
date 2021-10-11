@@ -184,7 +184,6 @@ put_int:
 .skip_prefix_0:
     cmp edi,8
     je .full0
-.go_on_skip:
     mov cl,[put_int_buffer+edi]
     inc edi
     cmp cl,'0'
