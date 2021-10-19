@@ -6,8 +6,8 @@ void idt_init(void);
 typedef void* intr_handler;
 
 enum intr_status{ //中断状态
-    INTR_OFF,   //中断关闭
-    INTR_ON     //中断打开
+    INTR_OFF,   //中断关闭 值为0
+    INTR_ON     //中断打开 值为1
 };
 
 enum intr_status intr_enable(void);

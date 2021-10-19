@@ -1,6 +1,6 @@
 #include "init.h"
 #include "../lib/kernel/print.h"
-#include "debugg.h"
+#include "debug.h"
 #include "memory.h"
 #include "../thread/thread.h"
 #include "interrupt.h"

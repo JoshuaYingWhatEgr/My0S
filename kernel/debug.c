@@ -1,4 +1,4 @@
-#include "debugg.h"
+#include "debug.h"
 #include "print.h"
 #include "interrupt.h"
 

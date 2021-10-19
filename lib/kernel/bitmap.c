@@ -3,7 +3,7 @@
 #include "string.h"
 #include "print.h"
 #include "interrupt.h"
-#include "debugg.h"
+#include "debug.h"
 
 /**
  * 将位图btmp初始化

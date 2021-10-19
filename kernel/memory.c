@@ -2,7 +2,7 @@
 #include "bitmap.h"
 #include "stdint.h"
 #include "global.h"
-#include "debugg.h"
+#include "debug.h"
 #include "print.h"
 #include "string.h"
 

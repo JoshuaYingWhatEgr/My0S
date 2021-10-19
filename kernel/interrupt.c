@@ -197,7 +197,7 @@ void idt_init() {
     put_str("idt_init start\n");
     idt_desc_init();       // 初始化中断描述符表
 
-    exception_init();
+    exception_init();      //注册通用的中断处理函数
     pic_init();           // 初始化8259A
 
     /* 加载idt */

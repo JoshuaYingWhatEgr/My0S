@@ -4,7 +4,7 @@
 #include "print.h"
 #include "thread.h"
 #include "interrupt.h"
-#include "debugg.h"
+#include "debug.h"
 
 #define IRQ0_FREQUENCY 1        //初始计数值
 #define INPUT_FREQUENCY 1193180 //计数器的工作频率

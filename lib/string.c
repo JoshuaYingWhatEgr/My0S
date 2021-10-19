@@ -1,6 +1,6 @@
 #include "string.h"
 #include "global.h"
-#include "debugg.h"
+#include "debug.h"
 
 /**
  * 将dst起始的size个字节置为value
